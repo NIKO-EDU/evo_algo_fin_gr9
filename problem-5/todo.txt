@@ -1,0 +1,9 @@
+- Test environment OK
+- Setup config 4x4, 6x6 so on
+- What are we testing ?
+    - Baseline Performance 4x4, 20K episodes, y=.99
+    - Increased complex 8x8, 50K episodes?, y=.99
+    - Short sighted agent, 20K episodes, y=.90
+    - Varying Learning Speed, 4x4, 20K episodes, alpha=.01
+
+
