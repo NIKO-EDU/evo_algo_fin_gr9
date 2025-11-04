@@ -6,12 +6,55 @@ import time
 # Import our configurations
 import config
 
+def train_agent(env, q_table, num_episodes, learning_rate, discount_factor, 
+                epsilon, min_epsilon, epsilon_decay_rate):
+    print("Training started...")
+    rewards_per_episode = []
+
+    for episode in range(num_episodes):
+        state, info = env.reset()
+        done = False
+        episode_reward = 0
+
+        while not done:
+            # 1. Choose an Action (Epsilon-Greedy Strategy)
+            if np.random.random() < epsilon:
+                action = env.action_space.sample()  # Explore
+            else:
+                action = np.argmax(q_table[state, :])  # Exploit
+
+            # 2. Take the Action
+            new_state, reward, terminated, truncated, info = env.step(action)
+            done = terminated or truncated
+
+            # 3. Update the Q-Table (Bellman Equation)
+            old_value = q_table[state, action]
+            next_max = np.max(q_table[new_state, :])
+            new_value = old_value + learning_rate * (reward + discount_factor * next_max - old_value)
+            q_table[state, action] = new_value
+
+            # 4. Update state and total reward
+            state = new_state
+            episode_reward += reward
+
+        # Decay epsilon after the episode
+        epsilon = max(min_epsilon, epsilon - epsilon_decay_rate)
+        rewards_per_episode.append(episode_reward)
+
+        # Print progress
+        if (episode + 1) % (num_episodes / 10) == 0:
+            print(f"  -> Episode {episode + 1}/{num_episodes} complete.")
+            
+    print("Training finished.")
+    return q_table, rewards_per_episode
+
+
 def main():
-    # --- Step 0: Load the Selected Experiment Configuration ---
+    # --- Step 0: Load Configuration ---
     exp_config = config.EXPERIMENTS[config.SELECTED_EXPERIMENT]
     print(f"--- Running Experiment: {exp_config['name']} ---")
 
-    # --- Step 1: Setup the Environment ---
+    # --- Step 1: Setup Environment ---
     seed = exp_config["seed"]
     random.seed(seed)
     np.random.seed(seed)
@@ -23,71 +66,27 @@ def main():
     )
     env.reset(seed=seed)
 
+    # --- Step 2: Initialize Agent ---
     num_states = env.observation_space.n
     num_actions = env.action_space.n
-    print(f"Map: {exp_config['map_name']}, States: {num_states}, Actions: {num_actions}")
-
-    # --- Step 2: Initialize Q-Table and Hyperparameters ---
     q_table = np.zeros((num_states, num_actions))
-
-    # Load hyperparameters from the config file
-    num_episodes = exp_config["num_episodes"]
-    learning_rate = exp_config["learning_rate"]
-    discount_factor = exp_config["discount_factor"]
-    epsilon = exp_config["epsilon"]
-    epsilon_decay_rate = exp_config["epsilon_decay_rate"]
-    min_epsilon = exp_config["min_epsilon"]
-
-    print("Hyperparameters loaded successfully.")
-
-    # set the list of rewards
-    rewards_per_episode = []
-
-    print("Q-Table is ready. Starting training...")
-    time.sleep(2) 
-
-    for episode in range(num_episodes):
-        state, info = env.reset()
-        done = False
-        episode_reward = 0
-        
-        while not done:
-            # choose action
-            if np.random.random() < epsilon:
-                # random action
-                action = env.action_space.sample()
-            else:
-                # choose best action from q-table
-                action = np.argmax(q_table[state, :])
-            
-            # take action and observe reward
-            new_state, reward, terminated, truncated, info = env.step(action)
-            done = terminated or truncated
-
-            # update q-table
-            old_value = q_table[state, action]
-            next_max = np.max(q_table[new_state, :])
-
-            new_value = old_value + learning_rate * (reward + discount_factor * next_max - old_value)
-            q_table[state, action] = new_value
-
-            # update state and reward
-            state = new_state
-            episode_reward += reward
-
-        # decay epsilon
-        epsilon = max(min_epsilon, epsilon * epsilon_decay_rate)
-        
-        rewards_per_episode.append(episode_reward)
-
-        if (episode + 1) % (num_episodes / 10) == 0:
-            print(f"Episode {episode + 1} of {num_episodes} complete.")
+    print(f"Map: {exp_config['map_name']}, States: {num_states}, Actions: {num_actions}")
     
-    print("Training complete for {exp_config['name']}")
+    # --- Step 3: Train the Agent ---
+    trained_q_table, rewards = train_agent(
+        env=env,
+        q_table=q_table,
+        num_episodes=exp_config["num_episodes"],
+        learning_rate=exp_config["learning_rate"],
+        discount_factor=exp_config["discount_factor"],
+        epsilon=exp_config["epsilon"],
+        min_epsilon=exp_config["min_epsilon"],
+        epsilon_decay_rate=exp_config["epsilon_decay_rate"]
+    )
 
-                
-
-                
+    print(f"\n--- Training complete for {exp_config['name']} ---")
+    print(f"Successfully received trained Q-table with shape {trained_q_table.shape}")
+    print(f"Successfully received rewards for {len(rewards)} episodes.")
     
     env.close()
 
