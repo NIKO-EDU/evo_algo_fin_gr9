@@ -1,20 +1,32 @@
 import gymnasium as gym
+from typing import Any
+import argparse
 import numpy as np
 import random
 import time
+import os
 
 # Import our configurations
 import config
 
-def train_agent(env, q_table, num_episodes, learning_rate, discount_factor, 
-                epsilon, min_epsilon, epsilon_decay_rate):
+def train_agent(
+    env: gym.Env, 
+    q_table: np.ndarray, 
+    num_episodes: int, 
+    learning_rate: float, 
+    discount_factor: float, 
+    epsilon: float, 
+    min_epsilon: float, 
+    epsilon_decay_rate: float
+) -> tuple[np.ndarray, list[float]]:
+
     print("Training started...")
-    rewards_per_episode = []
+    rewards_per_episode: list[float] = []
 
     for episode in range(num_episodes):
         state, info = env.reset()
-        done = False
-        episode_reward = 0
+        done: bool = False
+        episode_reward: float = 0.0
 
         while not done:
             # 1. Choose an Action (Epsilon-Greedy Strategy)
@@ -35,7 +47,7 @@ def train_agent(env, q_table, num_episodes, learning_rate, discount_factor,
 
             # 4. Update state and total reward
             state = new_state
-            episode_reward += reward
+            episode_reward += float(reward)
 
         # Decay epsilon after the episode
         epsilon = max(min_epsilon, epsilon - epsilon_decay_rate)
@@ -48,45 +60,78 @@ def train_agent(env, q_table, num_episodes, learning_rate, discount_factor,
     print("Training finished.")
     return q_table, rewards_per_episode
 
+def save_results(
+    experiment_name: str,
+    q_table: np.ndarray,
+    rewards: list[float]
+) -> None:
+    print("Saving results...")
 
-def main():
-    # --- Step 0: Load Configuration ---
-    exp_config = config.EXPERIMENTS[config.SELECTED_EXPERIMENT]
+    if not os.path.exists("data"): os.makedirs("data")
+
+    q_table_path = os.path.join("data", f"{experiment_name}_q_table.npy")
+    rewards_path = os.path.join("data", f"{experiment_name}_rewards.npy")
+
+    np.save(q_table_path, q_table)
+    np.save(rewards_path, np.array(rewards))
+
+    print(f"Results saved to {q_table_path} and {rewards_path}")
+
+def main() -> None:
+    # --- Step 0: Load Configuration FROM COMMAND LINE ---
+    parser = argparse.ArgumentParser(description="Train a Q-learning agent for a given experiment.")
+    parser.add_argument("experiment_name", type=str, help="The name of the experiment to run (e.g., BASELINE_4x4).")
+    args = parser.parse_args()
+    exp_name = args.experiment_name
+
+    if exp_name not in config.EXPERIMENTS:
+        print(f"Error: Experiment '{exp_name}' not found in config.py.")
+        return
+
+    exp_config: dict[str, Any]= config.EXPERIMENTS[exp_name]
     print(f"--- Running Experiment: {exp_config['name']} ---")
 
     # --- Step 1: Setup Environment ---
-    seed = exp_config["seed"]
+    seed: int = int(exp_config["seed"])
     random.seed(seed)
     np.random.seed(seed)
 
-    env = gym.make(
-        exp_config["env_id"],
-        map_name=exp_config["map_name"],
-        is_slippery=exp_config["is_slippery"]
+    env: gym.Env = gym.make(
+        str(exp_config["env_id"]),
+        map_name=str(exp_config["map_name"]),
+        is_slippery=bool(exp_config["is_slippery"])
     )
     env.reset(seed=seed)
 
     # --- Step 2: Initialize Agent ---
-    num_states = env.observation_space.n
-    num_actions = env.action_space.n
-    q_table = np.zeros((num_states, num_actions))
+    assert isinstance(env.observation_space, gym.spaces.Discrete)
+    assert isinstance(env.action_space, gym.spaces.Discrete)
+    num_states: int = int(env.observation_space.n)
+    num_actions: int = int(env.action_space.n)
+    q_table: np.ndarray = np.zeros((num_states, num_actions))
     print(f"Map: {exp_config['map_name']}, States: {num_states}, Actions: {num_actions}")
     
     # --- Step 3: Train the Agent ---
+    trained_q_table: np.ndarray
+    rewards: list[float]
     trained_q_table, rewards = train_agent(
-        env=env,
-        q_table=q_table,
-        num_episodes=exp_config["num_episodes"],
-        learning_rate=exp_config["learning_rate"],
-        discount_factor=exp_config["discount_factor"],
-        epsilon=exp_config["epsilon"],
-        min_epsilon=exp_config["min_epsilon"],
-        epsilon_decay_rate=exp_config["epsilon_decay_rate"]
+        env=                env,
+        q_table=            q_table,
+        num_episodes=       int(exp_config["num_episodes"]),
+        learning_rate=      float(exp_config["learning_rate"]),
+        discount_factor=    float(exp_config["discount_factor"]),
+        epsilon=            float(exp_config["epsilon"]),
+        min_epsilon=        float(exp_config["min_epsilon"]),
+        epsilon_decay_rate= float(exp_config["epsilon_decay_rate"])
     )
-
     print(f"\n--- Training complete for {exp_config['name']} ---")
-    print(f"Successfully received trained Q-table with shape {trained_q_table.shape}")
-    print(f"Successfully received rewards for {len(rewards)} episodes.")
+
+    # --- Step 4: Save Results ---
+    save_results(
+        exp_name,
+        trained_q_table,
+        rewards
+    )
     
     env.close()
 
