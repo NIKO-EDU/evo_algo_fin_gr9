@@ -8,10 +8,10 @@ PYTHON_EXEC = sys.executable
 
 # --- List of all experiments to run ---
 EXPERIMENTS = [
-    "BASELINE_4x4",
-    "HARDER_8x8",
-    "MYOPIC_AGENT_4x4",
-    "CAUTIOUS_AGENT_4x4"
+    "4x4_BASIC",
+    "8x8_HARD",
+    "4x4_MYOPIC",
+    "4x4_CAUTIOUS"
 ]
 
 def run_command(command_str: str):

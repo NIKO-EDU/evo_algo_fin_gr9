@@ -18,10 +18,15 @@ def train_agent(
     epsilon: float, 
     min_epsilon: float, 
     epsilon_decay_rate: float
-) -> tuple[np.ndarray, list[float]]:
-
+) -> tuple[np.ndarray, list[float], list[float]]:
+    """
+    Trains the agent using the Q-learning algorithm.
+    Returns the trained Q-table, a list of rewards per episode,
+    and a list of epsilon values per episode.
+    """
     print("Training started...")
     rewards_per_episode: list[float] = []
+    epsilon_history: list[float] = []
 
     for episode in range(num_episodes):
         state, info = env.reset()
@@ -49,7 +54,8 @@ def train_agent(
             state = new_state
             episode_reward += float(reward)
 
-        # Decay epsilon after the episode
+        # After the episode is done, record history and decay epsilon
+        epsilon_history.append(epsilon)
         epsilon = max(min_epsilon, epsilon - epsilon_decay_rate)
         rewards_per_episode.append(episode_reward)
 
@@ -58,12 +64,13 @@ def train_agent(
             print(f"  -> Episode {episode + 1}/{num_episodes} complete.")
             
     print("Training finished.")
-    return q_table, rewards_per_episode
+    return q_table, rewards_per_episode, epsilon_history
 
 def save_results(
     experiment_name: str,
     q_table: np.ndarray,
-    rewards: list[float]
+    rewards: list[float],
+    epsilon_history: list[float]
 ) -> None:
     print("Saving results...")
 
@@ -71,16 +78,18 @@ def save_results(
 
     q_table_path = os.path.join("data", f"{experiment_name}_q_table.npy")
     rewards_path = os.path.join("data", f"{experiment_name}_rewards.npy")
+    epsilon_path = os.path.join("data", f"{experiment_name}_epsilon.npy")
 
     np.save(q_table_path, q_table)
     np.save(rewards_path, np.array(rewards))
+    np.save(epsilon_path, np.array(epsilon_history))
 
-    print(f"Results saved to {q_table_path} and {rewards_path}")
+    print(f"Results saved to data/{experiment_name}_*")
 
 def main() -> None:
     # --- Step 0: Load Configuration FROM COMMAND LINE ---
     parser = argparse.ArgumentParser(description="Train a Q-learning agent for a given experiment.")
-    parser.add_argument("experiment_name", type=str, help="The name of the experiment to run (e.g., BASELINE_4x4).")
+    parser.add_argument("experiment_name", type=str, help="The name of the experiment to run (e.g., 4x4_BASIC).")
     args = parser.parse_args()
     exp_name = args.experiment_name
 
@@ -114,7 +123,9 @@ def main() -> None:
     # --- Step 3: Train the Agent ---
     trained_q_table: np.ndarray
     rewards: list[float]
-    trained_q_table, rewards = train_agent(
+    epsilon_history: list[float]
+    
+    trained_q_table, rewards, epsilon_history = train_agent(
         env=                env,
         q_table=            q_table,
         num_episodes=       int(exp_config["num_episodes"]),
@@ -130,7 +141,8 @@ def main() -> None:
     save_results(
         exp_name,
         trained_q_table,
-        rewards
+        rewards,
+        epsilon_history
     )
     
     env.close()
