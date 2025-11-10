@@ -1,60 +1,91 @@
 # evaluation.py
 
 import numpy as np
+from typing import Any
 from nsa import match_r_contiguous # we need the same matching rule from training
+from encoder import encode_message
 
-def classify_message(
+def get_match_count(
     encoded_message: np.ndarray,
     detectors: list[np.ndarray],
     r_value: int
-) -> str:
-    # Classifies a single encoded message as 'ham' or 'spam'.
-    # A message is spam if it matches ANY detector.
-
+) -> int:
+    match_count = 0
     for detector in detectors:
         if match_r_contiguous(encoded_message, detector, r_value):
-            return 'spam' # Found a match, classify as non-self (spam) and stop early.
+            match_count += 1
+    return match_count
+
+def calculate_detector_statistics(
+    detectors: list[np.ndarray],
+    validation_set: list[tuple[str, str]],
+    r_value: int,
+    hash_size: int,
+    ngram_size: int
+) -> dict:
+    total_ham_matches = 0
+    ham_message_count = 0
+    total_spam_matches = 0
+    spam_message_count = 0
     
-    return 'ham' # No detectors matched, classify as self (ham).
-
-def evaluate_performance(predictions: list[tuple[str, str]]):
-    # Calculates and prints the performance metrics from a list of (actual, predicted) labels.
-
-    # initialize counters
-    true_positives = 0 # spam predicted as spam
-    false_positives = 0 # ham predicted as spam
-    true_negatives = 0 # ham predicted as ham
-    false_negatives = 0 # spam predicted as ham
-
-    for actual_label, predicted_label in predictions:
-        if actual_label == 'spam' and predicted_label == 'spam':
-            true_positives += 1
-        elif actual_label == 'ham' and predicted_label == 'spam':
-            false_positives += 1
-        elif actual_label == 'ham' and predicted_label == 'ham':
-            true_negatives += 1
-        elif actual_label == 'spam' and predicted_label == 'ham':
-            false_negatives += 1
-
-    # calculate metrics, handling division by zero for safety
-    precision = true_positives / (true_positives + false_positives) if (true_positives + false_positives) > 0 else 0
-    recall = true_positives / (true_positives + false_negatives) if (true_positives + false_negatives) > 0 else 0
-    f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
+    print("\n--- Calculating Detector Validation Statistics ---")
     
-    # as per requirements, calculate false positive rate on ham
-    fp_rate_on_ham = false_positives / (false_positives + true_negatives) if (false_positives + true_negatives) > 0 else 0
+    for message, label in validation_set:
+        encoded_msg = encode_message(message, hash_size, ngram_size)
+        match_count = get_match_count(encoded_msg, detectors, r_value)
+        
+        if label == 'ham':
+            ham_message_count += 1
+            total_ham_matches += match_count
+        elif label == 'spam':
+            spam_message_count += 1
+            total_spam_matches += match_count
+    
+    avg_ham = total_ham_matches / ham_message_count if ham_message_count > 0 else 0
+    avg_spam = total_spam_matches / spam_message_count if spam_message_count > 0 else 0
+    
+    return {
+        "average_matches_per_ham_message": round(avg_ham, 4),
+        "average_matches_per_spam_message": round(avg_spam, 4)
+    }
 
-    print("\n--- Evaluation Results ---")
-    print(f"Confusion Matrix:")
-    print(f"  - True Positives (Spam as Spam): {true_positives}")
-    print(f"  - False Positives (Ham as Spam): {false_positives}")
-    print(f"  - True Negatives (Ham as Ham):   {true_negatives}")
-    print(f"  - False Negatives (Spam as Ham): {false_negatives}")
+def evaluate_with_thresholds(
+    test_results: list[tuple[int, str]],
+    thresholds: list[int]
+) -> dict[str, Any]:
+    # Calculates performance metrics for a range of thresholds.
+
+    results_by_threshold = {}
+    print("\n--- Evaluation Results by Threshold ---")
+    print("Threshold | F1-Score | Precision | Recall   | FP Rate")
+    print("----------|----------|-----------|----------|----------")
+
+    # loop through each threshold we want to test
+    for threshold in thresholds:
+        tp, fp, tn, fn = 0, 0, 0, 0
+        # generate predictions based on the current threshold
+        for match_count, actual_label in test_results:
+            predicted_label = 'spam' if match_count >= threshold else 'ham'
+            
+            if actual_label == 'spam' and predicted_label == 'spam': tp += 1
+            elif actual_label == 'ham' and predicted_label == 'spam': fp += 1
+            elif actual_label == 'ham' and predicted_label == 'ham': tn += 1
+            elif actual_label == 'spam' and predicted_label == 'ham': fn += 1
+
+        # calculate metrics for this threshold
+        precision = tp / (tp + fp) if (tp + fp) > 0 else 0
+        recall = tp / (tp + fn) if (tp + fn) > 0 else 0
+        f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
+        fp_rate = fp / (fp + tn) if (fp + tn) > 0 else 0
+        
+        # store results for this threshold
+        results_by_threshold[f"threshold_{threshold}"] = {
+            "confusion_matrix": {"tp": tp, "fp": fp, "tn": tn, "fn": fn},
+            "spam_metrics": {"precision": precision, "recall": recall, "f1_score": f1_score},
+            "ham_metrics": {"false_positive_rate": fp_rate}
+        }
+        # print a summary row to the console
+        print(f"    {threshold:<5} |   {f1_score:.4f} |    {precision:.4f} |   {recall:.4f} |   {fp_rate:.4f}")
     
-    print("\nPerformance Metrics for SPAM class:")
-    print(f"  - Precision: {precision:.4f}")
-    print(f"  - Recall:    {recall:.4f}")
-    print(f"  - F1-Score:  {f1_score:.4f} (Primary Metric)")
-    
-    print("\nPerformance Metrics for HAM class:")
-    print(f"  - False Positive Rate on Ham: {fp_rate_on_ham:.4f}")
+    return results_by_threshold  
+ 

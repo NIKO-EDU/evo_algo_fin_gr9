@@ -30,7 +30,7 @@ def generate_detectors(
     num_detectors: int, 
     hash_size: int, 
     r_value: int
-) -> list[np.ndarray]:
+) -> tuple[list[np.ndarray], float]:
     # Generates a set of detectors using the Negative Selection Algorithm.
     # This is the "censoring" or training phase. Detectors are generated randomly
     # and are only kept if they DO NOT match any item in the 'self' set.
@@ -68,6 +68,8 @@ def generate_detectors(
                 percent_done = (len(detectors) / num_detectors) * 100
                 print(f"  ... {percent_done:.0f}% complete ({len(detectors)}/{num_detectors} detectors found).")
                 next_milestone += print_increment
+    
+    acceptance_rate = 0.0
 
     if candidates_generated > 0:
         acceptance_rate = (num_detectors / candidates_generated) * 100
@@ -77,4 +79,4 @@ def generate_detectors(
     else:
         print("No detectors were generated. This is unexpected.")
 
-    return detectors
+    return detectors, acceptance_rate
