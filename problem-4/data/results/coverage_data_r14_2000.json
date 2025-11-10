@@ -1,0 +1,82 @@
+[
+    {
+        "num_detectors": 100,
+        "recall": 0.45576407506702415
+    },
+    {
+        "num_detectors": 200,
+        "recall": 0.6595174262734584
+    },
+    {
+        "num_detectors": 300,
+        "recall": 0.7962466487935657
+    },
+    {
+        "num_detectors": 400,
+        "recall": 0.8525469168900804
+    },
+    {
+        "num_detectors": 500,
+        "recall": 0.8847184986595175
+    },
+    {
+        "num_detectors": 600,
+        "recall": 0.9088471849865952
+    },
+    {
+        "num_detectors": 700,
+        "recall": 0.9410187667560321
+    },
+    {
+        "num_detectors": 800,
+        "recall": 0.9597855227882037
+    },
+    {
+        "num_detectors": 900,
+        "recall": 0.9705093833780161
+    },
+    {
+        "num_detectors": 1000,
+        "recall": 0.9705093833780161
+    },
+    {
+        "num_detectors": 1100,
+        "recall": 0.9731903485254692
+    },
+    {
+        "num_detectors": 1200,
+        "recall": 0.9731903485254692
+    },
+    {
+        "num_detectors": 1300,
+        "recall": 0.9785522788203753
+    },
+    {
+        "num_detectors": 1400,
+        "recall": 0.9785522788203753
+    },
+    {
+        "num_detectors": 1500,
+        "recall": 0.9785522788203753
+    },
+    {
+        "num_detectors": 1600,
+        "recall": 0.9812332439678284
+    },
+    {
+        "num_detectors": 1700,
+        "recall": 0.9812332439678284
+    },
+    {
+        "num_detectors": 1800,
+        "recall": 0.9812332439678284
+    },
+    {
+        "num_detectors": 1900,
+        "recall": 0.9812332439678284
+    },
+    {
+        "num_detectors": 2000,
+        "recall": 0.9839142091152815
+    }
+]

@@ -62,7 +62,11 @@ def split_data(
 
     return self_set, validation_set_labeled, test_set_labeled
 
-def get_or_generate_detectors(hyperparams: dict, training_set: list[str], seed: int) -> tuple[list[np.ndarray], float, float | str]:
+def get_or_generate_detectors(
+    hyperparams: dict, 
+    training_set: list[str], 
+    seed: int
+) -> tuple[list[np.ndarray], float, float | str]:
     # This new function handles all detector logic: loading, generating, saving.
     
     print("\n--- Checking for Pre-trained Detectors ---")
