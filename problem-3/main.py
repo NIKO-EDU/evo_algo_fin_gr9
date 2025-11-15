@@ -10,7 +10,7 @@ from basolver import BeesAlgorithm
 print("Starting program")
 print()
 
-problemfile = 'problems/knapPI_11_50_1000.csv'
+problemfile = 'problems/knapPI_11_2000_1000.csv'
 myproblem = KnapsackProblem(problemfile)
 
 print("Loaded problem with n=" + str(myproblem.n) + " items and W=" + str(myproblem.W) + " capacity")

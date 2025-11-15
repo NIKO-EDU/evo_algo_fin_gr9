@@ -1,0 +1,28 @@
+Starting program
+
+Loaded problem with n=100 items and W=64480 capacity
+
+--- Greedy Baseline Solution ---
+Total Value: 38889
+Total Weight: 45747
+Is Feasible: True
+
+--- Running Bees Algorithm Solver ---
+Starting Bees Algorithm
+Initial best fitness: 27085
+Iteration 100: Best fitness = 38889
+Iteration 200: Best fitness = 38889
+Iteration 300: Best fitness = 38889
+Iteration 400: Best fitness = 38889
+Iteration 500: Best fitness = 38889
+Iteration 600: Best fitness = 38889
+Iteration 700: Best fitness = 38889
+Iteration 800: Best fitness = 38889
+Iteration 900: Best fitness = 38889
+Iteration 1000: Best fitness = 38889
+Algorithm finished
+
+--- Bees Algorithm Final Result ---
+Best Value Found: 38889
+Best Weight Used: 45747
+Improvement vs Greedy: 0
