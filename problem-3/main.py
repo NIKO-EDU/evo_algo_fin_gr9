@@ -1,62 +1,52 @@
 # main.py
-# This is the main script to run the knapsack problem solver
 
-
-# Import the KnapsackProblem class from knapsack.py
 from knapsack import KnapsackProblem
-
-# Import the Solution class from knapsack.py
 from knapsack import Solution
-
-# Import the repairsolution function from knapsack.py
 from knapsack import repairsolution
-
-# Import the solvegreedy function from baseline.py
 from baseline import solvegreedy
+from basolver import BeesAlgorithm
 
 
-# Print a starting message
 print("Starting program")
 print()
 
-# Define the path to the problem file
 problemfile = 'problems/knapPI_11_50_1000.csv'
-
-# Create an instance of the knapsack problem
 myproblem = KnapsackProblem(problemfile)
 
-# Print the loaded problem details
 print("Loaded problem with n=" + str(myproblem.n) + " items and W=" + str(myproblem.W) + " capacity")
 print()
 
-# Run the greedy baseline solver
+# Run greedy baseline solver
 greedysolution = solvegreedy(myproblem)
 
-# Print the greedy baseline results
 print("--- Greedy Baseline Solution ---")
 print("Total Value: " + str(greedysolution.totalvalue))
 print("Total Weight: " + str(greedysolution.totalweight))
 print("Is Feasible: " + str(greedysolution.isfeasible))
 print()
 
-# Test the repair function
-print("Testing repair function on an invalid solution...")
+# Run Bees Algorithm solver
+print("--- Running Bees Algorithm Solver ---")
 
-# Create an invalid solution with all items selected
-testvector = []
-# Loop to add all ones
-for i in range(myproblem.n):
-    # Add a one to the list
-    testvector.append(1)
+# Define algorithm settings
+settingsns = 50
+settingsnre = 5
+settingsnrb = 15
+settingsnbe = 10
+settingsnbb = 5
+settingsmaxiter = 1000
 
-# Call the repair function
-repairedvector = repairsolution(testvector, myproblem)
+# Create the Bees Algorithm solver
+solver = BeesAlgorithm(myproblem, settingsns, settingsnre, settingsnrb, settingsnbe, settingsnbb, settingsmaxiter)
 
-# Create a Solution object from the repaired vector
-repairedsol = Solution(repairedvector, myproblem)
+# Run the solver
+bestsolution, history = solver.run()
 
-# Print the repaired solution results
-print("--- Repaired Solution ---")
-print("Repaired Value: " + str(repairedsol.totalvalue))
-print("Repaired Weight: " + str(repairedsol.totalweight))
-print("Is Feasible: " + str(repairedsol.isfeasible))
+# Print the final results
+print()
+print("--- Bees Algorithm Final Result ---")
+print("Best Value Found: " + str(bestsolution.totalvalue))
+print("Best Weight Used: " + str(bestsolution.totalweight))
+print("Improvement vs Greedy: " + str(bestsolution.totalvalue - greedysolution.totalvalue))
+
+# The history list will be used for plots later
