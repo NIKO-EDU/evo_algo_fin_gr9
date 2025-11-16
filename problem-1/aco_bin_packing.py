@@ -329,10 +329,20 @@ class ACOBinPacking:
             if self.best_solution is not None:
                 self._update_pheromone(self.best_solution, self.best_num_boxes)
             
-            # Track convergence
+            # Track convergence: use best-so-far (global best)
+            # This shows the best solution found up to this iteration
+            # Creates a non-increasing curve showing improvement over time
             self.convergence_history.append(self.best_num_boxes)
             
-            if (iteration + 1) % 10 == 0:
+            # Print progress less frequently for long runs
+            if self.n_iterations <= 100:
+                print_interval = 10
+            elif self.n_iterations <= 500:
+                print_interval = 50
+            else:
+                print_interval = 100
+            
+            if (iteration + 1) % print_interval == 0:
                 print(f"Iteration {iteration + 1}/{self.n_iterations}: Best = {self.best_num_boxes} boxes")
         
         # Convert solution back to original item indices
