@@ -1,0 +1,115 @@
+{
+    "hyperparameters": {
+        "HASH_SIZE": 512,
+        "NGRAM_SIZE": 3,
+        "NUM_DETECTORS": 1,
+        "R_CONTIGUOUS": 13,
+        "SEED": 93
+    },
+    "training_info": {
+        "training_time_seconds": 2.38,
+        "acceptance_rate": 0.07122507122507123
+    },
+    "detector_validation_stats": {
+        "average_matches_per_ham_message": 0.001,
+        "average_matches_per_spam_message": 0.0161
+    },
+    "evaluation_by_threshold": {
+        "threshold_1": {
+            "confusion_matrix": {
+                "tp": 4,
+                "fp": 0,
+                "tn": 966,
+                "fn": 369
+            },
+            "spam_metrics": {
+                "precision": 1.0,
+                "recall": 0.010723860589812333,
+                "f1_score": 0.021220159151193633
+            },
+            "ham_metrics": {
+                "false_positive_rate": 0.0
+            }
+        },
+        "threshold_2": {
+            "confusion_matrix": {
+                "tp": 0,
+                "fp": 0,
+                "tn": 966,
+                "fn": 373
+            },
+            "spam_metrics": {
+                "precision": 0,
+                "recall": 0.0,
+                "f1_score": 0
+            },
+            "ham_metrics": {
+                "false_positive_rate": 0.0
+            }
+        },
+        "threshold_3": {
+            "confusion_matrix": {
+                "tp": 0,
+                "fp": 0,
+                "tn": 966,
+                "fn": 373
+            },
+            "spam_metrics": {
+                "precision": 0,
+                "recall": 0.0,
+                "f1_score": 0
+            },
+            "ham_metrics": {
+                "false_positive_rate": 0.0
+            }
+        },
+        "threshold_5": {
+            "confusion_matrix": {
+                "tp": 0,
+                "fp": 0,
+                "tn": 966,
+                "fn": 373
+            },
+            "spam_metrics": {
+                "precision": 0,
+                "recall": 0.0,
+                "f1_score": 0
+            },
+            "ham_metrics": {
+                "false_positive_rate": 0.0
+            }
+        },
+        "threshold_8": {
+            "confusion_matrix": {
+                "tp": 0,
+                "fp": 0,
+                "tn": 966,
+                "fn": 373
+            },
+            "spam_metrics": {
+                "precision": 0,
+                "recall": 0.0,
+                "f1_score": 0
+            },
+            "ham_metrics": {
+                "false_positive_rate": 0.0
+            }
+        },
+        "threshold_10": {
+            "confusion_matrix": {
+                "tp": 0,
+                "fp": 0,
+                "tn": 966,
+                "fn": 373
+            },
+            "spam_metrics": {
+                "precision": 0,
+                "recall": 0.0,
+                "f1_score": 0
+            },
+            "ham_metrics": {
+                "false_positive_rate": 0.0
+            }
+        }
+    }
+}

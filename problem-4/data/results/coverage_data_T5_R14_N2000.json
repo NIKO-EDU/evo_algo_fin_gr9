@@ -1,0 +1,82 @@
+[
+    {
+        "num_detectors": 100,
+        "recall": 0.0
+    },
+    {
+        "num_detectors": 200,
+        "recall": 0.005361930294906166
+    },
+    {
+        "num_detectors": 300,
+        "recall": 0.03753351206434316
+    },
+    {
+        "num_detectors": 400,
+        "recall": 0.10187667560321716
+    },
+    {
+        "num_detectors": 500,
+        "recall": 0.1742627345844504
+    },
+    {
+        "num_detectors": 600,
+        "recall": 0.2520107238605898
+    },
+    {
+        "num_detectors": 700,
+        "recall": 0.3806970509383378
+    },
+    {
+        "num_detectors": 800,
+        "recall": 0.45576407506702415
+    },
+    {
+        "num_detectors": 900,
+        "recall": 0.5656836461126006
+    },
+    {
+        "num_detectors": 1000,
+        "recall": 0.6487935656836461
+    },
+    {
+        "num_detectors": 1100,
+        "recall": 0.7050938337801609
+    },
+    {
+        "num_detectors": 1200,
+        "recall": 0.7506702412868632
+    },
+    {
+        "num_detectors": 1300,
+        "recall": 0.7908847184986595
+    },
+    {
+        "num_detectors": 1400,
+        "recall": 0.8176943699731903
+    },
+    {
+        "num_detectors": 1500,
+        "recall": 0.8445040214477212
+    },
+    {
+        "num_detectors": 1600,
+        "recall": 0.8605898123324397
+    },
+    {
+        "num_detectors": 1700,
+        "recall": 0.8820375335120644
+    },
+    {
+        "num_detectors": 1800,
+        "recall": 0.8927613941018767
+    },
+    {
+        "num_detectors": 1900,
+        "recall": 0.903485254691689
+    },
+    {
+        "num_detectors": 2000,
+        "recall": 0.9115281501340483
+    }
+]

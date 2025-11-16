@@ -107,7 +107,13 @@ def run_single_experiment(hyperparams: dict):
     detectors, training_time, acceptance_rate = get_or_generate_detectors(hyperparams, self_training_set, hyperparams['SEED'])
 
     # calculate detector validation statistics
-    detector_stats = calculate_detector_statistics(detectors, validation_set, hyperparams['R_CONTIGUOUS'], hyperparams['HASH_SIZE'], hyperparams['NGRAM_SIZE'])
+    detector_stats = calculate_detector_statistics(
+        detectors, 
+        validation_set, 
+        hyperparams['R_CONTIGUOUS'], 
+        hyperparams['HASH_SIZE'], 
+        hyperparams['NGRAM_SIZE']
+    )
 
     # evaluate on the test set
     print(f"\n--- Starting Evaluation for R={hyperparams['R_CONTIGUOUS']} ---")

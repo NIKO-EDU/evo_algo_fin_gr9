@@ -15,8 +15,8 @@ from run import split_data
 from evaluation import get_match_count
 
 # --- Configuration ---
-R_VALUE = 14
-NUM_DETECTORS = 2000
+R_VALUE = 13
+NUM_DETECTORS = 1000
 # We will fix the classification threshold to 1 for this analysis.
 # A match with *any* detector flags the message as spam.
 DETECTION_THRESHOLD = 1
@@ -71,7 +71,7 @@ def generate_data():
 
     # 4. Save the results to a new file
     os.makedirs('data/results', exist_ok=True)
-    save_path = os.path.join('data/results', 'coverage_data.json')
+    save_path = os.path.join('data/results', f'coverage_data_T{DETECTION_THRESHOLD}_R{R_VALUE}_N{NUM_DETECTORS}.json')
     with open(save_path, 'w') as f:
         json.dump(coverage_results, f, indent=4)
         
