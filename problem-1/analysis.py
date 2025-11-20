@@ -57,7 +57,8 @@ def load_results(experiment_name: str, instance_name: str) -> Optional[Dict[str,
 def plot_convergence(
     convergence: np.ndarray,
     experiment_name: str,
-    instance_name: str
+    instance_name: str,
+    baseline_boxes: Optional[float] = None
 ) -> None:
     """
     Plot convergence curve showing how ACO improves over iterations.
@@ -85,6 +86,16 @@ def plot_convergence(
     
     # Plot convergence
     plt.plot(convergence, label='ACO Best Solution', color='blue', linewidth=2)
+
+    # Plot baseline horizontal line if provided
+    if baseline_boxes is not None:
+        plt.axhline(
+            y=baseline_boxes,
+            color='orange',
+            linestyle='--',
+            linewidth=2,
+            label=f'FFD Baseline ({baseline_boxes:.0f} boxes)'
+        )
     
     plt.title(f'Convergence: {experiment_name} - {instance_name}')
     plt.xlabel('Iteration')
@@ -275,10 +286,22 @@ def main() -> None:
     print(f"Number of boxes: {solution['num_boxes']}")
     print(f"Unused capacity: {solution['unused_capacity']}")
     print(f"Runtime: {solution['runtime']:.2f} seconds")
+
+    baseline = solution.get('baseline')
+    if baseline:
+        print("\nBaseline (First-Fit Decreasing)")
+        print("-"*60)
+        print(f"Number of boxes: {baseline['num_boxes']}")
+        print(f"Unused capacity: {baseline['unused_capacity']}")
+        runtime = baseline.get('runtime')
+        if runtime is not None:
+            print(f"Runtime: {runtime:.4f} seconds")
     
     # --- Generate Plots ---
     print("\nGenerating plots...")
-    plot_convergence(convergence, exp_name, args.instance)
+    baseline_num = baseline['num_boxes'] if baseline else None
+
+    plot_convergence(convergence, exp_name, args.instance, baseline_num)
     plot_load_distribution(
         solution['box_loads'],
         box_capacity,

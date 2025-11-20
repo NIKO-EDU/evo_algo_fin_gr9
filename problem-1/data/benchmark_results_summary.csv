@@ -1,9 +1,9 @@
 Instance,Description,Number of Boxes,Unused Capacity,Runtime (seconds)
-u120_00,"120 items, capacity 150 (uniform)",49,272,17.78
-u120_05,"120 items, capacity 150 (uniform)",49,228,19.02
-u250_00,"250 items, capacity 150 (uniform)",100,217,42.13
-u250_10,"250 items, capacity 150 (uniform)",106,244,43.40
-u500_00,"500 items, capacity 150 (uniform)",201,513,113.53
-t60_00,"60 items, capacity 100 (triplets)",22,225,6.25
-t120_00,"120 items, capacity 100 (triplets)",43,349,13.55
-t249_00,"249 items, capacity 100 (triplets)",90,800,32.66
+u120_00,"120 items, capacity 150 (uniform)",49,272,17.51
+u120_05,"120 items, capacity 150 (uniform)",49,228,20.07
+u250_00,"250 items, capacity 150 (uniform)",100,217,42.45
+u250_10,"250 items, capacity 150 (uniform)",106,244,45.43
+u500_00,"500 items, capacity 150 (uniform)",201,513,113.50
+t60_00,"60 items, capacity 100 (triplets)",22,225,6.38
+t120_00,"120 items, capacity 100 (triplets)",43,349,13.85
+t249_00,"249 items, capacity 100 (triplets)",90,800,33.95

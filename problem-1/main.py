@@ -10,6 +10,7 @@ import numpy as np
 # Import our modules
 import config
 from aco_bin_packing import ACOBinPacking
+from baselines import first_fit_decreasing
 from data_loader import load_orlib_instance, create_simple_instance, get_benchmark_instances
 
 
@@ -65,7 +66,8 @@ def save_results(
         'num_boxes': result['num_boxes'],
         'unused_capacity': result['unused_capacity'],
         'box_loads': result['box_loads'],
-        'runtime': runtime
+        'runtime': runtime,
+        'baseline': result.get('baseline')
     }
     np.save(solution_path, solution_data, allow_pickle=True)
     
@@ -180,6 +182,16 @@ Examples:
     print(f"Items: {item_sizes}")
     print(f"Box capacity: {box_capacity}")
     print()
+
+    # --- Baseline: First-Fit Decreasing ---
+    print("--- Baseline: First-Fit Decreasing (FFD) ---")
+    baseline_start = time.time()
+    baseline_result = first_fit_decreasing(item_sizes, box_capacity)
+    baseline_runtime = time.time() - baseline_start
+    print(f"Number of boxes (FFD): {baseline_result['num_boxes']}")
+    print(f"Unused capacity (FFD): {baseline_result['unused_capacity']}")
+    print(f"Runtime (FFD): {baseline_runtime:.4f} seconds")
+    print()
     
     # --- Step 2: Initialize ACO Solver ---
     solver = ACOBinPacking(
@@ -205,6 +217,15 @@ Examples:
     print(f"Unused capacity: {result['unused_capacity']}")
     print(f"Runtime: {runtime:.2f} seconds")
     print(f"\nBox loads: {result['box_loads']}")
+
+    # Attach baseline results for downstream analysis
+    result['baseline'] = {
+        'assignment': baseline_result['assignment'],
+        'box_loads': baseline_result['box_loads'],
+        'num_boxes': baseline_result['num_boxes'],
+        'unused_capacity': baseline_result['unused_capacity'],
+        'runtime': baseline_runtime
+    }
     
     # --- Step 4: Save Results ---
     save_results(exp_name, instance_name, result, runtime)
