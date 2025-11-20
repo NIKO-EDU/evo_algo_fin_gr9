@@ -39,8 +39,10 @@ def run_heuristic_policy(env: gym.Env, map_name: str, num_episodes: int = 1000) 
             elif current_col < goal_col:
                 action = RIGHT
             else:
-                # If on the goal row/col, just move towards the corner
-                action = RIGHT if current_col < goal_col else DOWN
+                # If we reach here, we're at or past the goal position
+                # (current_row >= goal_row AND current_col >= goal_col)
+                # In this case, prefer RIGHT then DOWN (though we should be at goal)
+                action = RIGHT
 
             state, reward, terminated, truncated, info = env.step(action)
             done = terminated or truncated

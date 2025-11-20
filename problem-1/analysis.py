@@ -124,7 +124,7 @@ def plot_load_distribution(
     
     Creates a bar chart showing:
     - X-axis: box number (1, 2, 3, ...)
-    - Y-axis: lo ad (sum of item sizes in that box)
+    - Y-axis: load (sum of item sizes in that box)
     - Red dashed line: box capacity limit
     
     This visualization helps understand:

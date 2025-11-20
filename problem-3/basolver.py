@@ -130,13 +130,15 @@ class BeesAlgorithm:
                 newpopulation.append(bestnewbee)
             
             # BEST BEES: Perform less intensive local search
-            for i in range(self.nre, self.nrb):
-                # Get the best bee
-                originalbee = self.population[i]
-                # Perform local search with fewer neighbors
-                bestnewbee = self.localsearch(originalbee, self.nbb)
-                # Add the result to new population
-                newpopulation.append(bestnewbee)
+            # Only process if nrb > nre (should always be true, but check for safety)
+            if self.nrb > self.nre:
+                for i in range(self.nre, self.nrb):
+                    # Get the best bee
+                    originalbee = self.population[i]
+                    # Perform local search with fewer neighbors
+                    bestnewbee = self.localsearch(originalbee, self.nbb)
+                    # Add the result to new population
+                    newpopulation.append(bestnewbee)
             
             # SCOUT BEES: Explore new random solutions
             numscouts = self.ns - self.nrb

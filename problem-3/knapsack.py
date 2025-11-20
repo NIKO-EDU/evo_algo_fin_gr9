@@ -42,7 +42,8 @@ class KnapsackProblem:
         for i in range(self.n):
             value = self.values[i]
             weight = self.weights[i]
-            ratio = value / weight
+            # Avoid division by zero (shouldn't happen in valid knapsack problems)
+            ratio = value / weight if weight > 0 else 0.0
             self.ratios.append(ratio)
 
 
