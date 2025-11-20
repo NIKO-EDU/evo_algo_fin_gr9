@@ -5,12 +5,15 @@ from knapsack import Solution
 from knapsack import repairsolution
 from baseline import solvegreedy
 from basolver import BeesAlgorithm
+from plotting import plotconvergence
+from plotting import plotcomparison
+from plotting import plotdetailed
 
 
 print("Starting program")
 print()
 
-problemfile = 'problems/knapPI_11_2000_1000.csv'
+problemfile = 'problems/knapPI_11_50_1000.csv'
 myproblem = KnapsackProblem(problemfile)
 
 print("Loaded problem with n=" + str(myproblem.n) + " items and W=" + str(myproblem.W) + " capacity")
@@ -50,3 +53,16 @@ print("Best Weight Used: " + str(bestsolution.totalweight))
 print("Improvement vs Greedy: " + str(bestsolution.totalvalue - greedysolution.totalvalue))
 
 # The history list will be used for plots later
+print()
+print("Generating plots...")
+
+# Create convergence plot
+plotconvergence(history, 'knapPI_11_50_1000', 'plots/convergence_50.png')
+
+# Create comparison plot
+plotcomparison(greedysolution.totalvalue, bestsolution.totalvalue, 'knapPI_11_50_1000', 'plots/comparison_50.png')
+
+# Create detailed combined plot
+plotdetailed(history, greedysolution.totalvalue, bestsolution.totalvalue, 'knapPI_11_50_1000', 'plots')
+
+print("All plots generated successfully!")
